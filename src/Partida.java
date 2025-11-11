@@ -3,12 +3,12 @@ import java.util.*;
 public class Partida {
     private int idPartida;
     private Jogador jogador;
-    private List<PerguntaTeste> perguntas;
+    private List<Pergunta> perguntas;
     private boolean concluida;
     private int indiceAtual;
     private static ArrayList<Jogador> jogadores = new ArrayList<>();
 
-    public Partida(Jogador jogador, List<PerguntaTeste> perguntas) {
+    public Partida(Jogador jogador, List<Pergunta> perguntas) {
         this.idPartida = idPartida;
         this.jogador = jogador;
         this.perguntas = perguntas;
@@ -24,7 +24,7 @@ public class Partida {
         return jogador;
     }
 
-    public List<PerguntaTeste> getPerguntas() {
+    public List<Pergunta> getPerguntas() {
         return perguntas;
     }
 
@@ -36,7 +36,7 @@ public class Partida {
         this.jogador = jogador;
     }
 
-    public void setPerguntas(List<PerguntaTeste> perguntas) {
+    public void setPerguntas(List<Pergunta> perguntas) {
         this.perguntas = perguntas;
     }
 
@@ -63,7 +63,7 @@ public class Partida {
 
             Scanner scanner = new Scanner(System.in);
 
-            PerguntaTeste atual = perguntas.get(indiceAtual);
+            Pergunta atual = perguntas.get(indiceAtual);
             System.out.println("\nPergunta: " + atual.getEnunciado());
             System.out.print("Sua resposta: ");
 
@@ -77,7 +77,7 @@ public class Partida {
     }
 
     public void responderPergunta(String resposta) {
-        PerguntaTeste p = perguntas.get(indiceAtual);
+        Pergunta p = perguntas.get(indiceAtual);
         if (p.checarResposta(resposta)) {
             jogador.somaPonto();
             System.out.println("✅ Correto!");

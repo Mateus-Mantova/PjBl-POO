@@ -2,41 +2,33 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Jogador jogador = new Jogador("Mariana");
 
-        boolean continuar = true;
-        ArrayList<Jogador> jogadores = new ArrayList<>();
+        List<Pergunta> perguntas = new ArrayList<>();
 
-        while (continuar) {
+        Pergunta vf1 = new PerguntaVerdadeiroFalso(
+                "O Sol é uma estrela?", "Astronomia", 2, true);
+        Pergunta vf2 = new PerguntaVerdadeiroFalso(
+                "A água ferve a 90 graus Celsius ao nível do mar?", "Ciência", 2, false);
 
-            System.out.print("\nDigite seu nome: ");
-            String nome = scanner.nextLine();
-            Jogador j = new Jogador(0,nome);
+        ArrayList<String> opcoes1 = new ArrayList<>(Arrays.asList("Azul", "Verde", "Vermelho", "Amarelo"));
+        Pergunta me1 = new PerguntaMultiplaEscolha(
+                "Qual é a cor da bandeira do Brasil que representa a floresta?", "Geografia", 3, opcoes1, "B");
 
-            List<Pergunta> perguntas = new ArrayList<>();
-            perguntas.add(new Pergunta("Qual a capital do Brasil?", "1"));
-            perguntas.add(new Pergunta("Quanto é 2 + 2?", "2"));
-            perguntas.add(new Pergunta("Quem vive no abacaxi?", "3"));
+        ArrayList<String> opcoes2 = new ArrayList<>(Arrays.asList("3", "4", "5", "6"));
+        Pergunta me2 = new PerguntaMultiplaEscolha(
+                "Quantos continentes existem?", "Geografia", 3, opcoes2, "C");
 
+        perguntas.add(vf1);
+        perguntas.add(me1);
+        perguntas.add(vf2);
+        perguntas.add(me2);
 
+        Partida partida = new Partida(jogador, perguntas);
+        partida.adicionarJogador(jogador);
 
-            Partida partida = new Partida(j,perguntas);
-            partida.iniciar();
+        partida.iniciar();
 
-            partida.adicionarJogador(j);
-
-            partida.ranking();
-
-            System.out.print("\nDeseja jogar novamente? (s/n): ");
-            String resposta = scanner.nextLine();
-
-            if (resposta.equalsIgnoreCase("n")) {
-                continuar = false;
-                System.out.println("Obrigado por jogar!");
-            }
-        }
+        partida.ranking();
     }
 }
-
-
-

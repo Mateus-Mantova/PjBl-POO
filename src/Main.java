@@ -13,10 +13,10 @@ public class Main {
             String nome = scanner.nextLine();
             Jogador j = new Jogador(0,nome);
 
-            List<PerguntaTeste> perguntas = new ArrayList<>();
-            perguntas.add(new PerguntaTeste("Qual a capital do Brasil?", "1"));
-            perguntas.add(new PerguntaTeste("Quanto é 2 + 2?", "2"));
-            perguntas.add(new PerguntaTeste("Quem vive no abacaxi?", "3"));
+            List<Pergunta> perguntas = new ArrayList<>();
+            perguntas.add(new Pergunta("Qual a capital do Brasil?", "1"));
+            perguntas.add(new Pergunta("Quanto é 2 + 2?", "2"));
+            perguntas.add(new Pergunta("Quem vive no abacaxi?", "3"));
 
 
 

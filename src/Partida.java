@@ -64,7 +64,7 @@ public class Partida {
             Scanner scanner = new Scanner(System.in);
 
             Pergunta atual = perguntas.get(indiceAtual);
-            System.out.println("\nPergunta: " + atual.getEnunciado());
+            System.out.println("\n" + atual.toString());
             System.out.print("Sua resposta: ");
 
             String resposta = scanner.nextLine();

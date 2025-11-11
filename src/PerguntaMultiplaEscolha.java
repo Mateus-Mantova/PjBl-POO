@@ -20,8 +20,16 @@ public class PerguntaMultiplaEscolha extends Pergunta {
     }
 
     public String toString() {
-        return super.toString()
-                + "\n(Tipo: Múltipla Escolha)\nOpções:\n"
-                + String.join("\n", opcoes);
+        StringBuilder sb = new StringBuilder();
+        sb.append("(Tipo: Múltipla Escolha)\n");
+        sb.append("Categoria: ").append(getCategoria()).append("\n");
+        sb.append("Pergunta: ").append(getEnunciado()).append("\n");
+        sb.append("Opções:\n");
+
+        for (int i = 0; i < opcoes.size(); i++) {
+            char letra = (char) ('A' + i);
+            sb.append(letra).append(") ").append(opcoes.get(i)).append("\n");
+        }
+        return sb.toString();
     }
 }

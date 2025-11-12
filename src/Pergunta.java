@@ -1,12 +1,12 @@
 public abstract class Pergunta {
     protected String enunciado;
     protected String categoria;
-    protected int valorPontos;
+    protected int pontuacao;
 
-    public Pergunta(String enunciado, String categoria, int valorPontos) {
+    public Pergunta(String enunciado, String categoria, int pontuacao) {
         this.enunciado = enunciado;
         this.categoria = categoria;
-        this.valorPontos = valorPontos;
+        this.pontuacao = pontuacao;
     }
 
     public String getEnunciado() {
@@ -17,8 +17,8 @@ public abstract class Pergunta {
         return categoria;
     }
 
-    public int getValorPontos() {
-        return valorPontos;
+    public int getPontuacao() {
+        return pontuacao;
     }
 
     public abstract boolean checarResposta(String respostaJogador);

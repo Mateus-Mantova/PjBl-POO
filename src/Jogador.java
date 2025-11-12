@@ -22,8 +22,7 @@ public class Jogador {
         this.pontos = pontos;
     }
 
-    public void somaPonto(){
-        pontos+=1;
+    public void somaPonto(int pontuacao) {
+        this.pontos += pontuacao;
     }
-
 }

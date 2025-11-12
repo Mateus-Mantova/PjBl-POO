@@ -30,6 +30,10 @@ public class PartidaMultiplayer extends Partida {
                         throw new RespostaInvalidaException("⚠️ Resposta inválida. Não pode ser vazia! Tente novamente.");
                     }
 
+                    if (p instanceof PerguntaMultiplaEscolha && resposta.trim().length() != 1) {
+                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Para Múltipla Escolha, digite apenas uma letra (ex: A, B, C ou D). Tente novamente.");
+                    }
+
                     if (p.checarResposta(resposta)) {
                         atual.somaPonto(p.getPontuacao());
                         System.out.println("✅ Correto! (+" + p.getPontuacao() + " pontos)");

@@ -1,19 +1,21 @@
 import java.util.*;
 
-public class Partida {
+public abstract class Partida {
     private int idPartida;
     private Jogador jogador;
-    private List<Pergunta> perguntas;
+    protected List<Pergunta> perguntas;
     private boolean concluida;
-    private int indiceAtual;
-    private static ArrayList<Jogador> jogadores = new ArrayList<>();
+    protected int indiceAtual;
+    protected ArrayList<Jogador> jogadores = new ArrayList<>();
 
     public Partida(Jogador jogador, List<Pergunta> perguntas) {
-        this.idPartida = idPartida;
+        this.idPartida = 0;
         this.jogador = jogador;
         this.perguntas = perguntas;
-        this.concluida = concluida;
-        this.indiceAtual = indiceAtual;
+        this.concluida = false;
+        this.indiceAtual = 0;
+        this.jogadores = new ArrayList<>();
+        this.jogadores.add(jogador);
     }
 
     public int getIdPartida() {
@@ -50,43 +52,30 @@ public class Partida {
 
     public void ranking() {
         System.out.println("\n===== RANKING DOS JOGADORES =====");
+        jogadores.sort(Comparator.comparingInt(Jogador::getPontos).reversed());
+
         for (Jogador j : jogadores) {
             System.out.println(j.getNome() + " - Pontuação: " + j.getPontos());
         }
         System.out.println("=================================\n");
     }
 
-    public void iniciar() {
-        System.out.println("=== Iniciando a partida ===");
-
-        while (!concluida) {
-
-            Scanner scanner = new Scanner(System.in);
-
-            Pergunta atual = perguntas.get(indiceAtual);
-            System.out.println("\n" + atual.toString());
-            System.out.print("Sua resposta: ");
-
-            String resposta = scanner.nextLine();
-            responderPergunta(resposta);
-        }
-
-        System.out.println("\n--- Fim de jogo ---");
-        System.out.println("Pontuação final de " + jogador.getNome() + ": " + jogador.getPontos() + " pontos!");
-
+    public List<Jogador> getJogadores() {
+        return jogadores;
     }
 
-    public void responderPergunta(String resposta) {
-        Pergunta p = perguntas.get(indiceAtual);
-        if (p.checarResposta(resposta)) {
-            jogador.somaPonto();
-            System.out.println("✅ Correto!");
-        } else {
-            System.out.println("❌ Errado!");
+    public abstract void iniciar();
+
+    public void exibirVencedor() {
+        if (jogadores.isEmpty()) return;
+
+        Jogador vencedor = jogadores.get(0);
+        for (Jogador j : jogadores) {
+            if (j.getPontos() > vencedor.getPontos()) {
+                vencedor = j;
+            }
         }
-        indiceAtual++;
-        if (indiceAtual >= perguntas.size()) {
-            concluida = true;
-        }
+        System.out.println("🏆 O vencedor foi: " + vencedor.getNome() +
+                " com " + vencedor.getPontos() + " pontos!");
     }
 }

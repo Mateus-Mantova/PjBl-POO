@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,20 +12,19 @@ public class Main {
     private DefaultTableModel rankingModel;
     private JTable rankingTable;
     private List<Jogador> jogadoresSolo = new ArrayList<>();
+    private final String ARQUIVO_RANKING = "ranking_solo.txt";
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().iniciarSwing());
     }
 
     public void iniciarSwing() {
-
+        carregarRanking();
         frame = new JFrame("Quiz POO");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 500);
         frame.setLayout(new BorderLayout());
-
         mostrarMenuInicial();
-
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -43,6 +43,7 @@ public class Main {
         painelPrincipal.add(titulo);
         painelPrincipal.add(Box.createRigidArea(new Dimension(0, 20)));
 
+
         JPanel rankingPanel = new JPanel(new BorderLayout());
         rankingPanel.setBorder(BorderFactory.createTitledBorder("Ranking Solo"));
         String[] colunas = {"Jogador", "Pontos"};
@@ -55,6 +56,7 @@ public class Main {
         atualizarRanking();
 
         painelPrincipal.add(Box.createRigidArea(new Dimension(0, 20)));
+
 
         JPanel modoPanel = new JPanel();
         modoPanel.setLayout(new FlowLayout());
@@ -73,6 +75,7 @@ public class Main {
                 jogadoresSolo.add(jogador);
                 PartidaSolo partidaSolo = new PartidaSolo(jogador, perguntas);
                 partidaSolo.iniciarSwing(frame, rankingModel, this);
+                salvarRanking();
             }
         });
 
@@ -121,6 +124,35 @@ public class Main {
         jogadoresSolo.sort((a, b) -> b.getPontos() - a.getPontos());
         for (Jogador j : jogadoresSolo) {
             rankingModel.addRow(new Object[]{j.getNome(), j.getPontos()});
+        }
+    }
+
+    private void carregarRanking() {
+        File file = new File(ARQUIVO_RANKING);
+        if (!file.exists()) return;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] partes = linha.split(";");
+                if (partes.length == 2) {
+                    String nome = partes[0];
+                    int pontos = Integer.parseInt(partes[1]);
+                    jogadoresSolo.add(new Jogador(nome, pontos));
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void salvarRanking() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(ARQUIVO_RANKING))) {
+            for (Jogador j : jogadoresSolo) {
+                pw.println(j.getNome() + ";" + j.getPontos());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

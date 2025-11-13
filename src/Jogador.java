@@ -1,11 +1,14 @@
 public class Jogador {
-   private int pontos;
-   private String nome;
-
+    private int pontos;
+    private String nome;
 
     public Jogador(String nome) {
-        this.pontos = 0;
+        this(nome, 0);
+    }
+
+    public Jogador(String nome, int pontos) {
         this.nome = nome;
+        this.pontos = pontos;
     }
 
     public int getPontos() {

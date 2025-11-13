@@ -1,45 +1,101 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.List;
-import java.util.Scanner;
 
 public class PartidaSolo extends Partida {
+
     public PartidaSolo(Jogador jogador, List<Pergunta> perguntas) {
         super(jogador, perguntas);
     }
 
     @Override
-    public void iniciar() {
-        System.out.println("Iniciando partida solo com o jogador(a): " + jogadores.get(0).getNome());
+    public void iniciarSwing(JFrame frame, DefaultTableModel rankingModel, Main main) {
+        for (int i = 0; i < perguntas.size(); i++) {
+            Pergunta p = perguntas.get(i);
+            boolean respondida = false;
 
-        Scanner sc = new Scanner(System.in);
-        for (Pergunta p : perguntas) {
-
-            while (true) {
-                System.out.println(p);
-                System.out.print("Resposta: ");
-                String resposta = sc.nextLine();
-
+            while (!respondida) {
                 try {
+                    String resposta = mostrarPerguntaDialog(p, "Pergunta " + (i + 1) + "/" + perguntas.size());
+
+                    if (resposta == null) {
+                        int confirma = JOptionPane.showConfirmDialog(frame, "Deseja sair da partida?", "Confirmar", JOptionPane.YES_NO_OPTION);
+                        if (confirma == JOptionPane.YES_OPTION) {
+                            exibirVencedor();
+                            main.mostrarMenuInicial();
+                            return;
+                        } else continue;
+                    }
+
                     if (resposta.trim().isEmpty()) {
-                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Não pode ser vazia! Tente novamente.");
+                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Não pode ser vazia!");
                     }
 
                     if (p instanceof PerguntaMultiplaEscolha && resposta.trim().length() != 1) {
-                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Para Múltipla Escolha, digite apenas uma letra (ex: A, B, C ou D). Tente novamente.");
+                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Para Múltipla Escolha, selecione apenas uma letra (A, B, C ou D).");
                     }
 
-                    if (p.checarResposta(resposta)) {
+                    boolean correta = p.checarResposta(resposta);
+                    if (correta) {
                         jogadores.get(0).somaPonto(p.getPontuacao());
-                        System.out.println("✅ Correto! (+" + p.getPontuacao() + " pontos)\n");
+                        JOptionPane.showMessageDialog(frame, "✅ Correto! (+" + p.getPontuacao() + " pontos)");
                     } else {
-                        System.out.println("❌ Errado!\n");
+                        JOptionPane.showMessageDialog(frame, "❌ Errado!");
                     }
-                    break;
-                } catch (RespostaInvalidaException e) {
-                    System.out.println(e.getMessage());
+
+                    ranking(rankingModel);
+
+                    respondida = true;
+                } catch (RespostaInvalidaException ex) {
+                    JOptionPane.showMessageDialog(frame, ex.getMessage(), "Resposta Inválida", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
-        ranking();
+
         exibirVencedor();
+        main.mostrarMenuInicial();
+    }
+
+    private String mostrarPerguntaDialog(Pergunta p, String titulo) {
+        if (p instanceof PerguntaMultiplaEscolha) {
+            PerguntaMultiplaEscolha me = (PerguntaMultiplaEscolha) p;
+            String[] opcoes = new String[me.getOpcoes().size()];
+            for (int i = 0; i < me.getOpcoes().size(); i++) {
+                char letra = (char) ('A' + i);
+                opcoes[i] = letra + ") " + me.getOpcoes().get(i);
+            }
+
+            String resp = (String) JOptionPane.showInputDialog(
+                    null,
+                    p.getEnunciado(),
+                    titulo,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opcoes,
+                    opcoes[0]
+            );
+
+            if (resp == null) return null;
+            return resp.substring(0, 1).toLowerCase();
+        } else {
+            String[] op = {"Verdadeiro", "Falso"};
+            String resp = (String) JOptionPane.showInputDialog(
+                    null,
+                    p.getEnunciado(),
+                    titulo,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    op,
+                    op[0]
+            );
+
+            if (resp == null) return null;
+            return resp.equalsIgnoreCase("Verdadeiro") ? "v" : "f";
+        }
+    }
+
+    @Override
+    public void iniciar() {
+        System.out.println("Use iniciarSwing() para jogar em interface gráfica.");
     }
 }

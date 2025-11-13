@@ -1,6 +1,8 @@
 public class Jogador {
    private int pontos;
    private String nome;
+
+
     public Jogador(String nome) {
         this.pontos = 0;
         this.nome = nome;

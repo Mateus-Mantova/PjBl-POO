@@ -1,53 +1,94 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.List;
-import java.util.Scanner;
 
 public class PartidaMultiplayer extends Partida {
 
+    private Jogador jogador2;
+
     public PartidaMultiplayer(Jogador j1, Jogador j2, List<Pergunta> perguntas) {
         super(j1, perguntas);
-        adicionarJogador(j2);
+        this.jogador2 = j2;
+        jogadores.add(j2);
+    }
+
+    @Override
+    public void iniciarSwing(JFrame frame, DefaultTableModel rankingModel, Main main) {
+        for (int i = 0; i < perguntas.size(); i++) {
+            Pergunta p = perguntas.get(i);
+            for (Jogador j : jogadores) {
+                boolean respondida = false;
+                while (!respondida) {
+                    try {
+                        String resposta = mostrarPerguntaDialog(p, "Jogador(a): " + j.getNome());
+                        if (resposta == null) continue;
+
+                        if (resposta.trim().isEmpty()) {
+                            throw new RespostaInvalidaException("⚠️ Resposta inválida!");
+                        }
+
+                        if (p instanceof PerguntaMultiplaEscolha && resposta.trim().length() != 1) {
+                            throw new RespostaInvalidaException("⚠️ Resposta inválida!");
+                        }
+
+                        if (p.checarResposta(resposta)) {
+                            j.somaPonto(p.getPontuacao());
+                            JOptionPane.showMessageDialog(frame, j.getNome() + ": ✅ Correto!");
+                        } else {
+                            JOptionPane.showMessageDialog(frame, j.getNome() + ": ❌ Errado!");
+                        }
+
+                        respondida = true;
+                    } catch (RespostaInvalidaException ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage(), "Resposta Inválida", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            }
+        }
+        exibirVencedor();
+        main.mostrarMenuInicial();
+    }
+
+    private String mostrarPerguntaDialog(Pergunta p, String titulo) {
+        if (p instanceof PerguntaMultiplaEscolha) {
+            PerguntaMultiplaEscolha me = (PerguntaMultiplaEscolha) p;
+            String[] opcoes = new String[me.getOpcoes().size()];
+            for (int i = 0; i < me.getOpcoes().size(); i++) {
+                char letra = (char) ('A' + i);
+                opcoes[i] = letra + ") " + me.getOpcoes().get(i);
+            }
+
+            String resp = (String) JOptionPane.showInputDialog(
+                    null,
+                    p.getEnunciado(),
+                    titulo,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opcoes,
+                    opcoes[0]
+            );
+
+            if (resp == null) return null;
+            return resp.substring(0, 1).toLowerCase();
+        } else {
+            String[] op = {"Verdadeiro", "Falso"};
+            String resp = (String) JOptionPane.showInputDialog(
+                    null,
+                    p.getEnunciado(),
+                    titulo,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    op,
+                    op[0]
+            );
+
+            if (resp == null) return null;
+            return resp.equalsIgnoreCase("Verdadeiro") ? "v" : "f";
+        }
     }
 
     @Override
     public void iniciar() {
-        System.out.println("Iniciando partida multiplayer entre " +
-                getJogadores().get(0).getNome() + " e " + getJogadores().get(1).getNome());
-
-        int turno = 0;
-        Scanner sc = new Scanner(System.in);
-
-        for (Pergunta p : getPerguntas()) {
-            Jogador atual = getJogadores().get(turno % getJogadores().size());
-
-            while (true) {
-                System.out.println("\nVez de: " + atual.getNome());
-                System.out.println(p);
-                System.out.print("Resposta: ");
-                String resposta = sc.nextLine();
-
-                try {
-                    if (resposta.trim().isEmpty()) {
-                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Não pode ser vazia! Tente novamente.");
-                    }
-
-                    if (p instanceof PerguntaMultiplaEscolha && resposta.trim().length() != 1) {
-                        throw new RespostaInvalidaException("⚠️ Resposta inválida. Para Múltipla Escolha, digite apenas uma letra (ex: A, B, C ou D). Tente novamente.");
-                    }
-
-                    if (p.checarResposta(resposta)) {
-                        atual.somaPonto(p.getPontuacao());
-                        System.out.println("✅ Correto! (+" + p.getPontuacao() + " pontos)");
-                    } else {
-                        System.out.println("❌ Errado!");
-                    }
-                    break;
-                } catch (RespostaInvalidaException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            turno++;
-        }
-        ranking();
-        exibirVencedor();
+        System.out.println("Use iniciarSwing() para jogar em interface gráfica.");
     }
 }

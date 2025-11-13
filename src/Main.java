@@ -1,57 +1,97 @@
-//TESTE
-
-import java.util.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
+
+    private JFrame frame;
+    private DefaultTableModel rankingModel;
+    private JTable rankingTable;
+    private List<Jogador> jogadoresSolo = new ArrayList<>();
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("==========================================");
-        System.out.println("          BEM-VINDO(A) AO QUIZ");
-        System.out.println("==========================================");
-
-        int modo = 0;
-        while (modo != 1 && modo != 2) {
-            System.out.println("\nEscolha o modo de jogo:");
-            System.out.println("1 - Partida Solo");
-            System.out.println("2 - Partida Multiplayer (2 Jogadores)");
-            System.out.print("Digite o número (1 ou 2): ");
-
-            try {
-                String input = scanner.nextLine();
-                modo = Integer.parseInt(input.trim());
-            } catch (NumberFormatException e) {
-                System.out.println("⚠️ Entrada inválida. Por favor, digite 1 ou 2.");
-            }
-        }
-
-        List<Pergunta> perguntasDoJogo = criarPerguntas();
-
-        if (modo == 1) {
-            System.out.print("\nDigite seu nome de Jogador: ");
-            String nomeSolo = scanner.nextLine();
-            Jogador jogadorSolo = new Jogador(nomeSolo);
-
-            PartidaSolo partidaSolo = new PartidaSolo(jogadorSolo, perguntasDoJogo);
-            partidaSolo.iniciar();
-
-        } else if (modo == 2) {
-            System.out.print("\nDigite o nome do Jogador 1: ");
-            String nomeJ1 = scanner.nextLine();
-            Jogador jogador1 = new Jogador(nomeJ1);
-
-            System.out.print("Digite o nome do Jogador 2: ");
-            String nomeJ2 = scanner.nextLine();
-            Jogador jogador2 = new Jogador(nomeJ2);
-
-            PartidaMultiplayer partidaMulti = new PartidaMultiplayer(jogador1, jogador2, perguntasDoJogo);
-            partidaMulti.iniciar();
-        }
-
-        scanner.close();
+        SwingUtilities.invokeLater(() -> new Main().iniciarSwing());
     }
 
-    private static List<Pergunta> criarPerguntas() {
+    public void iniciarSwing() {
+
+        frame = new JFrame("Quiz POO");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 500);
+        frame.setLayout(new BorderLayout());
+
+        mostrarMenuInicial();
+
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    public void mostrarMenuInicial() {
+        frame.getContentPane().removeAll();
+
+        JPanel painelPrincipal = new JPanel();
+        painelPrincipal.setLayout(new BoxLayout(painelPrincipal, BoxLayout.Y_AXIS));
+        painelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        frame.add(painelPrincipal, BorderLayout.CENTER);
+
+        JLabel titulo = new JLabel("BEM-VINDO(A) AO QUIZ");
+        titulo.setFont(new Font("Arial", Font.BOLD, 24));
+        titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        painelPrincipal.add(titulo);
+        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        JPanel rankingPanel = new JPanel(new BorderLayout());
+        rankingPanel.setBorder(BorderFactory.createTitledBorder("Ranking Solo"));
+        String[] colunas = {"Jogador", "Pontos"};
+        rankingModel = new DefaultTableModel(colunas, 0);
+        rankingTable = new JTable(rankingModel);
+        JScrollPane scroll = new JScrollPane(rankingTable);
+        rankingPanel.add(scroll, BorderLayout.CENTER);
+        painelPrincipal.add(rankingPanel);
+
+        atualizarRanking();
+
+        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        JPanel modoPanel = new JPanel();
+        modoPanel.setLayout(new FlowLayout());
+        JButton btnSolo = new JButton("Partida Solo");
+        JButton btnMulti = new JButton("Multiplayer");
+        modoPanel.add(btnSolo);
+        modoPanel.add(btnMulti);
+        painelPrincipal.add(modoPanel);
+
+        List<Pergunta> perguntas = criarPerguntas();
+
+        btnSolo.addActionListener(e -> {
+            String nome = JOptionPane.showInputDialog(frame, "Digite seu nome:");
+            if (nome != null && !nome.trim().isEmpty()) {
+                Jogador jogador = new Jogador(nome);
+                jogadoresSolo.add(jogador);
+                PartidaSolo partidaSolo = new PartidaSolo(jogador, perguntas);
+                partidaSolo.iniciarSwing(frame, rankingModel, this);
+            }
+        });
+
+        btnMulti.addActionListener(e -> {
+            String nome1 = JOptionPane.showInputDialog(frame, "Nome do Jogador 1:");
+            String nome2 = JOptionPane.showInputDialog(frame, "Nome do Jogador 2:");
+            if (nome1 != null && nome2 != null && !nome1.trim().isEmpty() && !nome2.trim().isEmpty()) {
+                Jogador j1 = new Jogador(nome1);
+                Jogador j2 = new Jogador(nome2);
+                PartidaMultiplayer partidaMulti = new PartidaMultiplayer(j1, j2, perguntas);
+                partidaMulti.iniciarSwing(frame, rankingModel, this);
+            }
+        });
+
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    private List<Pergunta> criarPerguntas() {
         List<Pergunta> perguntas = new ArrayList<>();
 
         Pergunta vf1 = new PerguntaVerdadeiroFalso(
@@ -74,5 +114,13 @@ public class Main {
         perguntas.add(me2);
 
         return perguntas;
+    }
+
+    public void atualizarRanking() {
+        rankingModel.setRowCount(0);
+        jogadoresSolo.sort((a, b) -> b.getPontos() - a.getPontos());
+        for (Jogador j : jogadoresSolo) {
+            rankingModel.addRow(new Object[]{j.getNome(), j.getPontos()});
+        }
     }
 }

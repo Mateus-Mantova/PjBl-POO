@@ -47,12 +47,12 @@ public class Main {
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton btnSolo = new JButton("Partida Solo (10 Perguntas Fixas)");
+        JButton btnSolo = new JButton("Partida Solo");
         btnSolo.setFont(new Font("Arial", Font.PLAIN, 16));
         btnSolo.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnSolo.setMaximumSize(new Dimension(300, 50));
 
-        JButton btnMulti = new JButton("Partida Multiplayer (10 Perguntas Aleatórias)");
+        JButton btnMulti = new JButton("Partida Multiplayer");
         btnMulti.setFont(new Font("Arial", Font.PLAIN, 16));
         btnMulti.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnMulti.setMaximumSize(new Dimension(300, 50));

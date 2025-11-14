@@ -1,0 +1,30 @@
+VF|Ciência|1|A água ferve a 100 graus Celsius ao nível do mar?|true
+ME|Geografia|1|Qual é a capital da França?|Berlim|Madrid|Paris|Roma|C
+VF|História|1|O Brasil foi descoberto em 1500?|true
+ME|Língua Portuguesa|1|Qual a classe gramatical da palavra 'rapidamente'?|Substantivo|Adjetivo|Advérbio|Verbo|C
+VF|Tecnologia|1|O Java é uma linguagem de programação orientada a objetos?|true
+ME|Cultura Pop|1|Quem é conhecido como Rei do Pop?|Elvis Presley|Michael Jackson|Prince|Madonna|B
+VF|Esportes|1|Um jogo de futebol tem 4 tempos?|false
+ME|Matemática|1|Qual o resultado de 5 x 8?|35|40|45|50|B
+VF|Biologia|1|A fotossíntese é o processo que as plantas usam para produzir seu próprio alimento?|true
+ME|Artes|1|Quem pintou a Monalisa?|Van Gogh|Picasso|Leonardo da Vinci|Monet|C
+VF|Química|2|O símbolo químico do ouro é Ag?|false
+ME|Geografia|2|Qual o maior oceano do mundo?|Atlântico|Índico|Ártico|Pacífico|D
+VF|História|2|A Segunda Guerra Mundial terminou em 1945?|true
+ME|Ciência|2|Qual planeta é conhecido como 'Planeta Vermelho'?|Vênus|Júpiter|Marte|Saturno|C
+VF|Lógica|2|Se todos os cachorros são mamíferos, e alguns mamíferos são azuis, então alguns cachorros são azuis?|false
+ME|Cultura Pop|2|Qual série de TV tem a frase 'Winter is Coming'?|Breaking Bad|Game of Thrones|Stranger Things|Friends|B
+VF|Esportes|2|O time de basquete tem 6 jogadores em quadra?|false
+ME|Matemática|2|Quanto é a raiz quadrada de 81?|7|8|9|10|C
+VF|Tecnologia|2|HTML é uma linguagem de programação?|false
+ME|Biologia|2|Qual animal é o maior mamífero do mundo?|Elefante|Baleia Azul|Girafa|Rinoceronte|B
+VF|Música|3|Os Beatles eram uma banda americana?|false
+ME|Geografia|3|Qual país tem a maior população do mundo (aproximadamente)?|EUA|Índia|China|Brasil|B
+VF|Literatura|3|Dom Casmurro foi escrito por Carlos Drummond de Andrade?|false
+ME|História|3|Em que ano o homem pisou na Lua pela primeira vez?|1959|1969|1979|1989|B
+VF|Ciência|3|O ponto de fusão do gelo é 0 graus Celsius?|true
+ME|Língua Portuguesa|3|Qual palavra está escrita incorretamente?|Excessão|Cessão|Seção|Sessão|A
+VF|Economia|3|Inflação é a desvalorização do dinheiro ao longo do tempo?|true
+ME|Química|3|Qual o elemento químico mais abundante na crosta terrestre?|Silício|Oxigênio|Alumínio|Ferro|B
+VF|Filosofia|3|A frase 'Penso, logo existo' é de Aristóteles?|false
+ME|Geografia|3|Qual o nome do maior deserto quente do mundo?|Deserto de Gobi|Deserto do Atacama|Deserto da Patagônia|Deserto do Saara|D

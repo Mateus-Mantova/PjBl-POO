@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Main {
@@ -13,6 +14,8 @@ public class Main {
     private JTable rankingTable;
     private List<Jogador> jogadoresSolo = new ArrayList<>();
     private final String ARQUIVO_RANKING = "ranking_solo.txt";
+    private final String ARQUIVO_PERGUNTAS = "perguntas.txt";
+    private List<Pergunta> todasAsPerguntas;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Main().iniciarSwing());
@@ -20,6 +23,9 @@ public class Main {
 
     public void iniciarSwing() {
         carregarRanking();
+
+        this.todasAsPerguntas = carregarPerguntasDoArquivo();
+
         frame = new JFrame("Quiz POO");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 500);
@@ -37,87 +43,129 @@ public class Main {
         painelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         frame.add(painelPrincipal, BorderLayout.CENTER);
 
-        JLabel titulo = new JLabel("BEM-VINDO(A) AO QUIZ");
+        JLabel titulo = new JLabel("BEM-VINDO(A) AO QUIZ POO!");
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         titulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        painelPrincipal.add(titulo);
-        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 20)));
 
+        JButton btnSolo = new JButton("Partida Solo (10 Perguntas Fixas)");
+        btnSolo.setFont(new Font("Arial", Font.PLAIN, 16));
+        btnSolo.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnSolo.setMaximumSize(new Dimension(300, 50));
 
-        JPanel rankingPanel = new JPanel(new BorderLayout());
-        rankingPanel.setBorder(BorderFactory.createTitledBorder("Ranking Solo"));
-        String[] colunas = {"Jogador", "Pontos"};
-        rankingModel = new DefaultTableModel(colunas, 0);
-        rankingTable = new JTable(rankingModel);
-        JScrollPane scroll = new JScrollPane(rankingTable);
-        rankingPanel.add(scroll, BorderLayout.CENTER);
-        painelPrincipal.add(rankingPanel);
-
-        atualizarRanking();
-
-        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 20)));
-
-
-        JPanel modoPanel = new JPanel();
-        modoPanel.setLayout(new FlowLayout());
-        JButton btnSolo = new JButton("Partida Solo");
-        JButton btnMulti = new JButton("Multiplayer");
-        modoPanel.add(btnSolo);
-        modoPanel.add(btnMulti);
-        painelPrincipal.add(modoPanel);
-
-        List<Pergunta> perguntas = criarPerguntas();
+        JButton btnMulti = new JButton("Partida Multiplayer (10 Perguntas Aleatórias)");
+        btnMulti.setFont(new Font("Arial", Font.PLAIN, 16));
+        btnMulti.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnMulti.setMaximumSize(new Dimension(300, 50));
 
         btnSolo.addActionListener(e -> {
+            if (todasAsPerguntas.size() < 10) {
+                JOptionPane.showMessageDialog(frame, "É necessário pelo menos 10 perguntas no arquivo para o modo Solo.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Pergunta> perguntasSolo = todasAsPerguntas.subList(0, 10);
+
             String nome = JOptionPane.showInputDialog(frame, "Digite seu nome:");
             if (nome != null && !nome.trim().isEmpty()) {
                 Jogador jogador = new Jogador(nome);
                 jogadoresSolo.add(jogador);
-                PartidaSolo partidaSolo = new PartidaSolo(jogador, perguntas);
+                PartidaSolo partidaSolo = new PartidaSolo(jogador, perguntasSolo);
                 partidaSolo.iniciarSwing(frame, rankingModel, this);
                 salvarRanking();
             }
         });
 
         btnMulti.addActionListener(e -> {
+            if (todasAsPerguntas.size() < 10) {
+                JOptionPane.showMessageDialog(frame, "É necessário pelo menos 10 perguntas no arquivo para o modo Multiplayer.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Pergunta> perguntasMulti = new ArrayList<>(todasAsPerguntas);
+            Collections.shuffle(perguntasMulti);
+            perguntasMulti = perguntasMulti.subList(0, 10);
+
             String nome1 = JOptionPane.showInputDialog(frame, "Nome do Jogador 1:");
             String nome2 = JOptionPane.showInputDialog(frame, "Nome do Jogador 2:");
             if (nome1 != null && nome2 != null && !nome1.trim().isEmpty() && !nome2.trim().isEmpty()) {
                 Jogador j1 = new Jogador(nome1);
                 Jogador j2 = new Jogador(nome2);
-                PartidaMultiplayer partidaMulti = new PartidaMultiplayer(j1, j2, perguntas);
+                PartidaMultiplayer partidaMulti = new PartidaMultiplayer(j1, j2, perguntasMulti);
                 partidaMulti.iniciarSwing(frame, rankingModel, this);
             }
         });
 
+        rankingModel = new DefaultTableModel(new Object[]{"Jogador", "Pontos"}, 0);
+        rankingTable = new JTable(rankingModel);
+        JScrollPane scrollPane = new JScrollPane(rankingTable);
+        scrollPane.setMaximumSize(new Dimension(300, 200));
+        scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblRanking = new JLabel("Ranking Solo:");
+        lblRanking.setFont(new Font("Arial", Font.BOLD, 18));
+        lblRanking.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        atualizarRanking();
+
+        painelPrincipal.add(titulo);
+        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 30)));
+        painelPrincipal.add(btnSolo);
+        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 10)));
+        painelPrincipal.add(btnMulti);
+        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 30)));
+        painelPrincipal.add(lblRanking);
+        painelPrincipal.add(Box.createRigidArea(new Dimension(0, 5)));
+        painelPrincipal.add(scrollPane);
+
         frame.revalidate();
         frame.repaint();
     }
-
     private List<Pergunta> criarPerguntas() {
+        return todasAsPerguntas;
+    }
+
+    private List<Pergunta> carregarPerguntasDoArquivo() {
         List<Pergunta> perguntas = new ArrayList<>();
+        File file = new File(ARQUIVO_PERGUNTAS);
 
-        Pergunta vf1 = new PerguntaVerdadeiroFalso(
-                "O Sol é uma estrela?", "Astronomia", 1, true);
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                if (linha.trim().isEmpty()) continue;
 
-        ArrayList<String> opcoes1 = new ArrayList<>(Arrays.asList("Azul", "Verde", "Vermelho", "Amarelo"));
-        Pergunta me1 = new PerguntaMultiplaEscolha(
-                "Qual é a cor da bandeira do Brasil que representa a floresta?", "Geografia", 1, opcoes1, "B");
+                String[] partes = linha.split("\\|");
 
-        Pergunta vf2 = new PerguntaVerdadeiroFalso(
-                "A água ferve a 90 graus Celsius ao nível do mar?", "Ciência", 1, false);
+                try {
+                    String tipo = partes[0].trim();
+                    String categoria = partes[1].trim();
+                    int pontuacao = Integer.parseInt(partes[2].trim());
+                    String enunciado = partes[3].trim();
 
-        ArrayList<String> opcoes2 = new ArrayList<>(Arrays.asList("4", "5", "6", "7"));
-        Pergunta me2 = new PerguntaMultiplaEscolha(
-                "Quantos continentes são geralmente reconhecidos?", "Geografia", 1, opcoes2, "D");
+                    if (tipo.equalsIgnoreCase("VF")) {
+                        boolean resposta = Boolean.parseBoolean(partes[4].trim());
+                        perguntas.add(new PerguntaVerdadeiroFalso(enunciado, categoria, pontuacao, resposta));
 
-        perguntas.add(vf1);
-        perguntas.add(me1);
-        perguntas.add(vf2);
-        perguntas.add(me2);
+                    } else if (tipo.equalsIgnoreCase("ME")) {
+                        ArrayList<String> opcoes = new ArrayList<>();
+                        opcoes.add(partes[4].trim());
+                        opcoes.add(partes[5].trim());
+                        opcoes.add(partes[6].trim());
+                        opcoes.add(partes[7].trim());
+                        String respostaCorreta = partes[8].trim();
+
+                        perguntas.add(new PerguntaMultiplaEscolha(enunciado, categoria, pontuacao, opcoes, respostaCorreta));
+                    }
+                } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                    System.err.println("Erro ao processar linha do arquivo de perguntas: " + linha);
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(frame, "Erro ao carregar perguntas: " + e.getMessage() + "\nVerifique se o arquivo 'perguntas.txt' existe.", "Erro de IO", JOptionPane.ERROR_MESSAGE);
+        }
 
         return perguntas;
     }
+
 
     public void atualizarRanking() {
         rankingModel.setRowCount(0);

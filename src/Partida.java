@@ -35,6 +35,13 @@ public abstract class Partida {
                 "🏆 O vencedor foi: " + vencedor.getNome() + " com " + vencedor.getPontos() + " pontos!");
     }
 
+    public void exibirSolo(){
+        Jogador vencedor = jogadores.get(0);
+        javax.swing.JOptionPane.showMessageDialog(null,
+                 vencedor.getNome() + " sua pontuação foi de " + vencedor.getPontos() + " pontos!");
+    }
+
+
     public abstract void iniciar();
     public abstract void iniciarSwing(JFrame frame, DefaultTableModel rankingModel, Main main);
 }

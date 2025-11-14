@@ -21,7 +21,7 @@ public class PartidaSolo extends Partida {
                     if (resposta == null) {
                         int confirma = JOptionPane.showConfirmDialog(frame, "Deseja sair da partida?", "Confirmar", JOptionPane.YES_NO_OPTION);
                         if (confirma == JOptionPane.YES_OPTION) {
-                            exibirVencedor();
+                            exibirSolo();
                             main.mostrarMenuInicial();
                             return;
                         } else continue;
@@ -52,45 +52,58 @@ public class PartidaSolo extends Partida {
             }
         }
 
-        exibirVencedor();
+        exibirSolo();
         main.mostrarMenuInicial();
     }
 
     private String mostrarPerguntaDialog(Pergunta p, String titulo) {
         if (p instanceof PerguntaMultiplaEscolha) {
             PerguntaMultiplaEscolha me = (PerguntaMultiplaEscolha) p;
-            String[] opcoes = new String[me.getOpcoes().size()];
+
+            String[] opcoesBotoes = new String[me.getOpcoes().size()];
             for (int i = 0; i < me.getOpcoes().size(); i++) {
-                char letra = (char) ('A' + i);
-                opcoes[i] = letra + ") " + me.getOpcoes().get(i);
+                opcoesBotoes[i] = String.valueOf((char) ('A' + i));
             }
 
-            String resp = (String) JOptionPane.showInputDialog(
+            StringBuilder mensagem = new StringBuilder();
+            mensagem.append(p.getEnunciado()).append("\n\n");
+            for (int i = 0; i < me.getOpcoes().size(); i++) {
+                char letra = (char) ('A' + i);
+                mensagem.append(letra).append(") ").append(me.getOpcoes().get(i)).append("\n");
+            }
+
+            int selecao = JOptionPane.showOptionDialog(
                     null,
-                    p.getEnunciado(),
+                    mensagem.toString(),
                     titulo,
+                    JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    opcoes,
-                    opcoes[0]
+                    opcoesBotoes,
+                    opcoesBotoes[0]
             );
 
-            if (resp == null) return null;
-            return resp.substring(0, 1).toLowerCase();
+            if (selecao == JOptionPane.CLOSED_OPTION) return null;
+
+            return opcoesBotoes[selecao].toLowerCase();
+
         } else {
-            String[] op = {"Verdadeiro", "Falso"};
-            String resp = (String) JOptionPane.showInputDialog(
+            String[] opBotoes = {"Verdadeiro", "Falso"};
+
+            int selecao = JOptionPane.showOptionDialog(
                     null,
                     p.getEnunciado(),
                     titulo,
+                    JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    op,
-                    op[0]
+                    opBotoes,
+                    opBotoes[0]
             );
 
-            if (resp == null) return null;
-            return resp.equalsIgnoreCase("Verdadeiro") ? "v" : "f";
+            if (selecao == JOptionPane.CLOSED_OPTION) return null;
+
+            return opBotoes[selecao].equalsIgnoreCase("Verdadeiro") ? "v" : "f";
         }
     }
 

@@ -16,6 +16,7 @@ mateus;4
 oi;4
 gy;4
 gustavo;3
+Mariana;2
 aaa;0
 sss;0
 oi;0
